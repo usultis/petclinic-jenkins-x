@@ -1,0 +1,30 @@
+buildPack: none
+pipelineConfig:
+  pipelines:
+    release:
+      pipeline:
+        # replace: true
+        stages:
+          - name: Maven Build
+            agent:
+              image: maven
+            steps:
+              - command: mvn
+                args:
+                  - clean
+                  - install
+          - name: Kaniko Build
+            agent:
+              image: gcr.io/kaniko-project/executor:latest
+            # environment:
+            #   - name: GOOGLE_APPLICATION_CREDENTIALS
+            #     valueFrom:
+            #       secretKeyRef:
+            #         name: kaniko-secret
+            #         key: kaniko-secret
+            steps:
+              - command: /kaniko/executor
+                args:
+                  - "--dockerfile=Dockerfile"
+                  - "--context=/workspace/source"
+                  - "--destination=eu.gcr.io/emea-sa-demo/petclinic-kaniko:latest"
