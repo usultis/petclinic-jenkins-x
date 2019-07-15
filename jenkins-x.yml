@@ -28,3 +28,14 @@ pipelineConfig:
                   - "--dockerfile=Dockerfile"
                   - "--context=/workspace/source"
                   - "--destination=eu.gcr.io/emea-sa-demo/petclinic-kaniko:latest"
+          - name: Kubectl Deploy 
+            agent:
+              image: gcr.io/cloud-builders/kubectl:latest
+            steps:
+              - command: kubectl
+                args:
+                  - apply
+                  - -f
+                  - https://github.com/dcanadillas/petclinic-kaniko-deploy/blob/master/test-deploy.yaml?raw=true
+                  - -n
+                  - jx-staging
